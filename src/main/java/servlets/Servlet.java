@@ -1,6 +1,5 @@
 package servlets;
 
-import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
@@ -10,7 +9,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.util.Arrays;
 import java.util.LinkedList;
 
@@ -36,33 +34,23 @@ public class Servlet extends HttpServlet {
             //Checking: What count of URLs
             if (urls.length == 3) {
 
-                //
-                Document[] httpDocs = new Document[urls.length];
-                for (int i = 0; i < httpDocs.length; i++) {
-                    if (urls[i].isEmpty())
-                        errors.append(i + " URL is empty. ");
-                    else {
-                        //Get file or write Exception "URL broken"
-                        try {
-                            httpDocs[i] = Jsoup.connect(urls[i]).get();
-                        } catch (IOException ex) {
-                            errors.append("URL Broken. " + ex);
-                        }
-                    }
-                }
+                //getting documents by urls (multiThreading)
+                Document[] httpDocs = (new Downloader()).download(urls);
 
-                //Parsing Files on pairs Tag-Value
-                LinkedList<Entry> pairsTagValue = new LinkedList<>();
+                //Parsing Files on pairs Tag-Value and put into DB
                 for (Document document : httpDocs) {
-                    System.out.println("Document name is " + document.baseUri());
+                    LinkedList<Entry> pairsTagValue = new LinkedList<>();
+
                     for (Element el : document.children()) {
+                        System.out.println("doc is " + document.baseUri());
+                        System.out.println("el is " + el);
                         processTree(el, pairsTagValue);
                     }
+
+                    //Put URL and his tag-value
+//                    urlPairs.put(document.baseUri(), pairsTagValue);
+                    DB.writeCollection(document.baseUri(), pairsTagValue);
                 }
-
-                DB.writeIntoDB(pairsTagValue);
-
-                DB.getEntrys().forEach(System.out::println);
 
                 //Send the pairs Forward
                 req.setAttribute("pairs", DB.getEntrys());
@@ -74,7 +62,6 @@ public class Servlet extends HttpServlet {
         if (errors.length() > 0 ) req.setAttribute("errors", errors.toString());
         req.getRequestDispatcher("index.jsp").forward(req, resp);
     }
-
 
     private void processTree(Element e, LinkedList<Entry> list) {
         String name = e.tagName();

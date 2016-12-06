@@ -17,7 +17,7 @@
     <p>First URL:<input type="text" name="URL" value="http://m.vk.com"/></p>
     <p>Second URL:<input type="text" name="URL" value="http://google.com.ua"/></p>
     <p>Third URL:<input type="text" name="URL" value="http://mail.ru"/></p>
-    <input type="submit" value="PROCESS"/>
+    <input type="submit" name="process" value="PROCESS"/>
 </form>
 
 <c:if test="!empty errors"><${errors}></c:if>

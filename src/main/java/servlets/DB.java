@@ -15,12 +15,17 @@ import java.util.List;
  */
 public class DB {
 
-    final static String DB_TABLE_NAME = "test";
+//    final static String DB_TABLE_NAME = "test";
     final static String DB_NAME = "test";
+    final static LinkedList<String> collectionNames = new LinkedList<>();
 
-    public static boolean writeIntoDB(List<Entry> list) {
+    public static boolean writeCollection(String collectionName, List<Entry> list) {
+        //Prepare db to work with it
         MongoClient client = new MongoClient();
         MongoDatabase mongoDB = client.getDatabase(DB_NAME);
+
+        //Add new collection name (coll name equals URL)
+        collectionNames.add(collectionName);
 
         for (Entry entry : list){
             Document d = new Document();
@@ -28,17 +33,17 @@ public class DB {
             d.append("tag", entry.getTag());
             d.append("value", entry.getValue());
 
-            mongoDB.getCollection(DB_TABLE_NAME).insertOne(d);
+            mongoDB.getCollection(collectionName).insertOne(d);
         }
 
         return true;
     }
 
-    public static List<Entry> getEntrys(){
+    public static List<Entry> getEntrys(String collName){
         MongoClient client = new MongoClient();
         MongoDatabase mongoDB = client.getDatabase(DB_NAME);
 
-        FindIterable<Document> iter = mongoDB.getCollection(DB_TABLE_NAME).find();
+        FindIterable<Document> iter = mongoDB.getCollection(collName).find();
         LinkedList<Entry> list = new LinkedList<>();
 
         for (Document d : iter) {
@@ -48,4 +53,13 @@ public class DB {
         return list;
     }
 
+    public static List<Entry> getEntrys() {
+        LinkedList<Entry> list = new LinkedList<>();
+
+        for (String collName : collectionNames) {
+            list.addAll(getEntrys(collName));
+        }
+
+        return list;
+    }
 }
