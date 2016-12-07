@@ -7,6 +7,7 @@ import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -53,13 +54,13 @@ public class DB {
         return list;
     }
 
-    public static List<Entry> getEntrys() {
-        LinkedList<Entry> list = new LinkedList<>();
+    public static HashMap getEntrys() {
+        HashMap<String, List<Entry>> urlPairs = new HashMap<>();
 
         for (String collName : collectionNames) {
-            list.addAll(getEntrys(collName));
+            urlPairs.put(collName, getEntrys(collName));
         }
 
-        return list;
+        return urlPairs;
     }
 }

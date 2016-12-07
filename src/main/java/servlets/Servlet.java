@@ -1,5 +1,6 @@
 package servlets;
 
+import org.jetbrains.annotations.NotNull;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
@@ -25,15 +26,22 @@ public class Servlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        StringBuilder errors = new StringBuilder();
+        //Check: does "action" exist
+        if (req.getParameter("action") == null) {
+            req.setAttribute("errors", "Action not found");
+            req.getRequestDispatcher("index.jsp").forward(req, resp);
+        }
 
-        String[] urls = req.getParameterValues("URL");
-        System.out.println("URLS " + Arrays.toString(urls));
-        //Checking: Are fields send URLs
-        if (urls != null){
-            //Checking: What count of URLs
-            if (urls.length == 3) {
 
+        LinkedList<String> errors = new LinkedList<>();
+
+        //Check which function are calling
+        if (req.getParameter("action").equals("PROCESS")){
+            //Prepare input statement
+            String[] urls = urlPrepare(req.getParameterValues("URL"));
+            System.out.println("URLS " + Arrays.toString(urls));
+
+            if (urls.length > 0) {
                 //getting documents by urls (multiThreading)
                 Document[] httpDocs = (new Downloader()).download(urls);
 
@@ -48,18 +56,20 @@ public class Servlet extends HttpServlet {
                     }
 
                     //Put URL and his tag-value
-//                    urlPairs.put(document.baseUri(), pairsTagValue);
                     DB.writeCollection(document.baseUri(), pairsTagValue);
                 }
 
                 //Send the pairs Forward
                 req.setAttribute("pairs", DB.getEntrys());
             } else {
-                req.setAttribute("errors", "Error" + "Must be three URLs");
+                errors.add("Error: Invalid input data. Empty URL");
             }
+        } else {
+            errors.add("Error: Unexpected action");
         }
 
-        if (errors.length() > 0 ) req.setAttribute("errors", errors.toString());
+
+        if (!errors.isEmpty()) req.setAttribute("errors", errors.toString());
         req.getRequestDispatcher("index.jsp").forward(req, resp);
     }
 
@@ -72,6 +82,29 @@ public class Servlet extends HttpServlet {
         for (Element el : e.children()) {
             processTree(el, list);
         }
+    }
+
+
+    /**
+     * If inputURL is empty, then return zero-length-array
+     * Add protocol, if url haven't it, and remove empty lines.
+     * @param inputURL array with URLs
+     * @return array with processed URLs
+     */
+    private String[] urlPrepare(String[] inputURL) {
+        if (inputURL == null) return new String[0];
+
+        LinkedList<String> outputURL = new LinkedList<>();
+        for (String s : inputURL) {
+            if (s.isEmpty()) continue;
+            if (s.startsWith("http://") || s.startsWith("https://")) {
+                outputURL.add(s);
+            } else {
+                outputURL.add("http://" + s);
+            }
+        }
+
+        return outputURL.toArray(new String[outputURL.size()]);
     }
 
 }

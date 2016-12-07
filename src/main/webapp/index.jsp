@@ -14,27 +14,32 @@
 <body>
 
 <form action="/servlet" method="post">
-    <p>First URL:<input type="text" name="URL" value="http://m.vk.com"/></p>
-    <p>Second URL:<input type="text" name="URL" value="http://google.com.ua"/></p>
-    <p>Third URL:<input type="text" name="URL" value="http://mail.ru"/></p>
-    <input type="submit" name="process" value="PROCESS"/>
+    <p><input title="First URL:" type="text" name="URL" value="http://m.vk.com"/></p>
+    <p><input title="Second URL:" type="text" name="URL" value="http://google.com.ua"/></p>
+    <p><input title="Third URL:" type="text" name="URL" value="http://mail.ru"/></p>
+    <input type="submit" name="action" value="PROCESS"/>
 </form>
 
-<c:if test="!empty errors"><${errors}></c:if>
+<c:if test="${!empty errors}"><p>${errors}</p></c:if>
 
 <c:if test="${!empty pairs}">
-    <table>
-        <tr style="text-align: center">
-            <th>Tag</th>
-            <th>Value</th>
-        </tr>
-        <c:forEach items="${pairs}" var="item">
+    <c:forEach items="${pairs}" var="pair">
+    <details>
+        <summary>${pair.getKey()}</summary>
+        <table style="text-align: center">
             <tr>
-                <td>&lt;${item.getTag()}&gt;</td>
-                <td>${item.getValue()}</td>
+                <th>Tag</th>
+                <th>Value</th>
             </tr>
-        </c:forEach>
-    </table>
+            <c:forEach items="${pair.getValue()}" var="tagValue">
+                <tr>
+                    <td>&lt;${tagValue.getTag()}&gt;</td>
+                    <td>${tagValue.getValue()}</td>
+                </tr>
+            </c:forEach>
+        </table>
+    </details>
+    </c:forEach>
 </c:if>
 
 </body>
