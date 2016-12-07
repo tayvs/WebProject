@@ -16,7 +16,6 @@
           <element id="library" level="project" name="Maven: org.junit.jupiter:junit-jupiter-api:5.0.0-M3" />
           <element id="library" level="project" name="Maven: org.opentest4j:opentest4j:1.0.0-M1" />
           <element id="library" level="project" name="Maven: org.junit.platform:junit-platform-commons:1.0.0-M3" />
-          <element id="library" level="project" name="Maven: org.jetbrains:annotations:15.0" />
         </element>
       </element>
       <element id="directory" name="META-INF">

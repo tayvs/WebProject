@@ -35,6 +35,10 @@ public class Downloader {
         return documents;
     }
 
+    public IOException getEx() {
+        return ex;
+    }
+
     private void setThreadDone(DownloadThread thread) {
         if (thread.isError) ex.addSuppressed(thread.ex);
         else if (!thread.isDownload)

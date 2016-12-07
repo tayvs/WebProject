@@ -16,15 +16,12 @@ import java.util.List;
  */
 public class DB {
 
-//    final static String DB_TABLE_NAME = "test";
-    final static String DB_NAME = "test";
-    final static LinkedList<String> collectionNames = new LinkedList<>();
+    final String DB_NAME = "test";
+    final LinkedList<String> collectionNames = new LinkedList<>();
+    final MongoClient client = new MongoClient();
+    final MongoDatabase mongoDB = client.getDatabase(DB_NAME);
 
-    public static boolean writeCollection(String collectionName, List<Entry> list) {
-        //Prepare db to work with it
-        MongoClient client = new MongoClient();
-        MongoDatabase mongoDB = client.getDatabase(DB_NAME);
-
+    public boolean writeCollection(String collectionName, List<Entry> list) {
         //Add new collection name (coll name equals URL)
         collectionNames.add(collectionName);
 
@@ -40,10 +37,7 @@ public class DB {
         return true;
     }
 
-    public static List<Entry> getEntrys(String collName){
-        MongoClient client = new MongoClient();
-        MongoDatabase mongoDB = client.getDatabase(DB_NAME);
-
+    public List<Entry> getEntrys(String collName){
         FindIterable<Document> iter = mongoDB.getCollection(collName).find();
         LinkedList<Entry> list = new LinkedList<>();
 
@@ -54,7 +48,7 @@ public class DB {
         return list;
     }
 
-    public static HashMap getEntrys() {
+    public HashMap getEntrys() {
         HashMap<String, List<Entry>> urlPairs = new HashMap<>();
 
         for (String collName : collectionNames) {

@@ -14,9 +14,9 @@
 <body>
 
 <form action="/servlet" method="post">
-    <p><input title="First URL:" type="text" name="URL" value="http://m.vk.com"/></p>
-    <p><input title="Second URL:" type="text" name="URL" value="http://google.com.ua"/></p>
-    <p><input title="Third URL:" type="text" name="URL" value="http://mail.ru"/></p>
+    <p>First URL:<input type="text" name="URL" value="http://m.vk.com"/></p>
+    <p>Second URL:<input type="text" name="URL" value="http://google.com.ua"/></p>
+    <p>Third URL:<input type="text" name="URL" value="http://mail.ru"/></p>
     <input type="submit" name="action" value="PROCESS"/>
 </form>
 
