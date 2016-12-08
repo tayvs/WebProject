@@ -2,13 +2,10 @@ package servlets;
 
 import com.mongodb.MongoClient;
 import com.mongodb.client.FindIterable;
-import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by tayvs on 05.12.2016.
@@ -57,14 +54,48 @@ public class DB {
         return urlPairs;
     }
 
-    public String getEntrysJSON(String[] collNames) {
-        Document doc = new Document();
 
-        for (String collName : collNames) {
-            MongoCollection<Document> collection = mongoDB.getCollection(collName);
-            doc.put(collName, collection.toString());
+    public String getEntrysJSON() {
+        //<URL, List<Entry(Tag, Attribute)>>
+        HashMap<String, List<Entry>> urlPairs = getAlllEntrys();
+        Document returnJSON = new Document();
+
+        //URL index
+        Integer urlIndex = 1;
+        for (Map.Entry<String, List<Entry>> urlEntryList : urlPairs.entrySet()) {
+            //get entryList
+            LinkedList<Entry> entryList = (LinkedList<Entry>) urlEntryList.getValue();
+            urlEntryList.getValue().sort(Comparator.comparing(Entry::getTag));
+
+
+            Document tagAttrJSON = new Document();
+            //<tag, list<attributes>>
+            HashMap<String, List<String>> entryMap = tagValueToMap(entryList);
+            entryMap.entrySet().forEach((mEntry) -> tagAttrJSON.put(mEntry.getKey(), Arrays.toString(mEntry.getValue().toArray())));
+
+
+            Document urlJSON = new Document();
+            urlJSON.put("url", urlEntryList.getKey());
+            urlJSON.put("pairs", tagAttrJSON.toJson());
+            returnJSON.put((urlIndex++).toString(), urlJSON);
         }
 
-        return doc.toString();
+        return returnJSON.toJson();
+    }
+
+    private HashMap tagValueToMap(List<Entry> list) {
+        //<Tag, List<Attributes>>
+        HashMap<String, List<String>> tagValueMap = new HashMap<>();
+
+        list.forEach((e) -> {
+            List l = tagValueMap.get(e.getTag());
+            if (l == null) {
+                l = new LinkedList<String>();
+            }
+            l.add(e.getValue());
+            tagValueMap.put(e.getTag(), l);
+        });
+
+        return tagValueMap;
     }
 }

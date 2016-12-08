@@ -20,7 +20,7 @@
     <input type="submit" name="action" value="PROCESS"/>
 </form>
 
-<c:if test="${!empty errors}"><p>${errors}</p></c:if>
+<c:if test="${null != errors}"><p>${errors}</p></c:if>
 
 <c:if test="${!empty pairs}">
     <c:forEach items="${pairs}" var="pair">

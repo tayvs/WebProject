@@ -51,8 +51,8 @@ public class Parser {
         return db.getAlllEntrys();
     }
 
-    public String getEntrysJSON(String[] collNames) {
-        return db.getEntrysJSON(urlPrepare(collNames));
+    public String getEntrysJSON() {
+        return db.getEntrysJSON();
     }
 
     public Exception getEx() {

@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Arrays;
 
 /**
  * Created by tayvs on 08.12.2016.
@@ -24,7 +25,12 @@ public class APIServlet extends HttpServlet {
 
         Parser parser = new Parser();
         String[] urls = req.getParameterValues("URL");
-        resp.getWriter().write(parser.getEntrysJSON(urls));
+
+        System.out.println(Arrays.toString(urls));
+
+        parser.setURLs(urls);
+
+        resp.getWriter().write(parser.getEntrysJSON());
     }
 
 }

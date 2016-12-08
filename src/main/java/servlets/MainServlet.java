@@ -38,7 +38,8 @@ public class MainServlet extends HttpServlet {
 
             //Send the pairs Forward
             req.setAttribute("pairs", parser.getEntrys());
-            errors.add(parser.getEx().getMessage());
+            if (parser.getEx().getMessage() != null && !parser.getEx().getMessage().isEmpty())
+                errors.add(parser.getEx().getMessage());
         } else {
             errors.add("Error: Unexpected action");
         }
