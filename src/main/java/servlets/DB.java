@@ -1,9 +1,8 @@
 package servlets;
 
-import com.mongodb.Cursor;
 import com.mongodb.MongoClient;
 import com.mongodb.client.FindIterable;
-import com.mongodb.client.MongoCursor;
+import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
 
@@ -48,7 +47,7 @@ public class DB {
         return list;
     }
 
-    public HashMap getEntrys() {
+    public HashMap getAlllEntrys() {
         HashMap<String, List<Entry>> urlPairs = new HashMap<>();
 
         for (String collName : collectionNames) {
@@ -56,5 +55,16 @@ public class DB {
         }
 
         return urlPairs;
+    }
+
+    public String getEntrysJSON(String[] collNames) {
+        Document doc = new Document();
+
+        for (String collName : collNames) {
+            MongoCollection<Document> collection = mongoDB.getCollection(collName);
+            doc.put(collName, collection.toString());
+        }
+
+        return doc.toString();
     }
 }

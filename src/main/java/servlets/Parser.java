@@ -48,7 +48,11 @@ public class Parser {
     }
 
     public HashMap getEntrys() {
-        return db.getEntrys();
+        return db.getAlllEntrys();
+    }
+
+    public String getEntrysJSON(String[] collNames) {
+        return db.getEntrysJSON(urlPrepare(collNames));
     }
 
     public Exception getEx() {

@@ -12,7 +12,7 @@ import java.util.LinkedList;
  * Created by tayvs on 04.12.2016.
  */
 @WebServlet("/servlet")
-public class Servlet extends HttpServlet {
+public class MainServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
